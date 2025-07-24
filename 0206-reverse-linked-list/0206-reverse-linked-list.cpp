@@ -7,7 +7,9 @@
  *     ListNode(int x) : val(x), next(nullptr) {}
  *     ListNode(int x, ListNode *next) : val(x), next(next) {}
  * };
- */
+ *////
+
+// recursive soln
 class Solution {
 public:
     ListNode* reverseList(ListNode* head) {
@@ -20,3 +22,18 @@ public:
         return newHead;
     }
 };
+
+
+// ITERATIVE SOLN
+
+Node* reverseLinkedList(Node *head)
+{
+        Node*temp =head;
+        Node*prev=NULL;
+        while(temp!=NULL){
+            Node* front= temp->next;
+            temp->next= prev;
+            prev=temp;
+            temp=front;
+        }return prev;
+}
