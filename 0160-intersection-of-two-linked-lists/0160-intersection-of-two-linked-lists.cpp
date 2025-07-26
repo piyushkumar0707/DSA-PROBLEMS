@@ -20,5 +20,5 @@ public:
             if(temp2==NULL)temp2=firstHead;
       }return temp1;
         
-    }
+    } 
 };
