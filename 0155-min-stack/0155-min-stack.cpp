@@ -1,35 +1,41 @@
 class MinStack {
-private:
-    stack<int> s;
-    stack<int> minS;
-
+    private:
+    stack<pair<int,int>>st;
 public:
     MinStack() {
-        // No initialization needed beyond stack creation
+        
     }
-
+    
     void push(int val) {
-        s.push(val);
-        // Push the new min value onto minS
-        if (minS.empty() || val <= minS.top()) {
-            minS.push(val);
-        } else {
-            minS.push(minS.top());
+        if(st.empty()){
+            st.push({val,val});
+        }else{
+            int currentMin= min(val, st.top().second);
+            st.push({val,currentMin});
         }
     }
-
+    
     void pop() {
-        if (!s.empty()) {
-            s.pop();
-            minS.pop();
+        if(!st.empty()){
+            st.pop();
         }
     }
 
+    
     int top() {
-        return s.top();
+        return st.top().first;
     }
-
+    
     int getMin() {
-        return minS.top();
+        return st.top().second;
     }
 };
+
+/**
+ * Your MinStack object will be instantiated and called as such:
+ * MinStack* obj = new MinStack();
+ * obj->push(val);
+ * obj->pop();
+ * int param_3 = obj->top();
+ * int param_4 = obj->getMin();
+ */
