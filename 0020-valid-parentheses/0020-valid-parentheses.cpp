@@ -2,22 +2,20 @@ class Solution {
 public:
     bool isValid(string s) {
         stack<char> st;
-        unordered_map<char, char> bracketMap = {
-            {')', '('},
-            {']', '['},
-            {'}', '{'}
-        };
 
         for (char ch : s) {
-            if (bracketMap.count(ch)) {
-                // If it's a closing bracket
-                if (st.empty() || st.top() != bracketMap[ch]) {
+            if (ch == '(' || ch == '{' || ch == '[') {
+                st.push(ch);
+            } else {
+                if (st.empty()) return false;
+
+                char top = st.top();
+                if ((ch == ')' && top != '(') ||
+                    (ch == '}' && top != '{') ||
+                    (ch == ']' && top != '[')) {
                     return false;
                 }
                 st.pop();
-            } else {
-                // It's an opening bracket
-                st.push(ch);
             }
         }
 
