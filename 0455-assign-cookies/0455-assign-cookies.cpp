@@ -1,20 +1,27 @@
+#include <vector>
+#include <algorithm>
+using namespace std;
+
 class Solution {
 public:
     int findContentChildren(vector<int>& g, vector<int>& s) {
-        sort(g.begin(), g.end());  // Sort greed factors
-        sort(s.begin(), s.end());  // Sort cookie sizes
-        
-        int i = 0, j = 0;  // i for children, j for cookies
-        int contentChildren = 0;
-        
-        while (i < g.size() && j < s.size()) {
-            if (s[j] >= g[i]) {
-                contentChildren++;
-                i++;  // Move to next child
+        // Sort greed factors and cookie sizes
+        sort(g.begin(), g.end());
+        sort(s.begin(), s.end());
+
+        int child = 0;  // Pointer to children
+        int cookie = 0; // Pointer to cookies
+
+        // Try to satisfy each child with the smallest sufficient cookie
+        while (child < g.size() && cookie < s.size()) {
+            if (s[cookie] >= g[child]) {
+                // Cookie satisfies the child's greed
+                child++;  // Move to next child
             }
-            j++;  // Move to next cookie
+            cookie++;  // Move to next cookie regardless
         }
-        
-        return contentChildren;
+
+        // 'child' now represents the number of content children
+        return child;
     }
 };
