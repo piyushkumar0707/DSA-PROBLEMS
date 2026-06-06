@@ -1,11 +1,11 @@
 class Solution {
 public:
     int subarraysWithKDistinct(vector<int>& nums, int k) {
-        return atMost(nums,k)-atMost(nums, k-1);
+        return atMost(nums, k)-atMost(nums, k-1);
         
     }
-    int atMost(vector<int>&nums,int k){
-        int left=0, count =0;
+    int atMost(vector<int> &nums, int k){
+        int count=0; int left=0;
         unordered_map<int,int>freq;
         for(int right=0; right<nums.size(); right++){
             freq[nums[right]]++;
