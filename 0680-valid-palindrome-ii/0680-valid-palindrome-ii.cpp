@@ -1,25 +1,20 @@
 class Solution {
 public:
     bool validPalindrome(string s) {
-        int l=0,r=s.size()-1;
-        while(l<r){
-            if(s[l]!=s[r]){
-                //remove left or right char
-                return check(s,l+1,r) || check(s,l,r-1);
-            }
-            l++;
-            r--;
+        int left=0, right=s.size()-1;
+        while(left<right){
+            if(s[left]!=s[right]){return palindrome(s,left+1,right) ||palindrome(s,left,right-1);}
+            left++;
+            right--;
         }return true;
         
     }
-
-
-    bool check(string &s, int l, int r){
-        while(l<r){
-            if(s[l]!=s[r])return false;
-            l++;
-            r--;
-        }return true;
+    bool palindrome(string &s, int left, int right){
         
+        while(left<right){
+            if(s[left]!=s[right])return false;
+            left++;
+            right--;
+        }return true;
     }
 };
