@@ -1,25 +1,34 @@
 class Solution {
 public:
     vector<int> nextGreaterElement(vector<int>& nums1, vector<int>& nums2) {
-        unordered_map<int, int> nge;
+        unordered_map<int,int> nextGreater;  // value -> next greater value
         stack<int> st;
-
-        for (int i = nums2.size() - 1; i >= 0; --i) {
-            int num = nums2[i];
-
-            while (!st.empty() && st.top() <= num) {
+        
+        // Step 1: nums2 ko right-to-left traverse karo
+        for (int i = nums2.size() - 1; i >= 0; i--) {
+            int current = nums2[i];
+            
+            // chhote/equal elements ko pop karo (useless hai)
+            while (!st.empty() && st.top() <= current) {
                 st.pop();
             }
-
-            nge[num] = st.empty() ? -1 : st.top();
-            st.push(num);
+            
+            // jo bacha stack mein top pe, wahi next greater hai
+            if (st.empty()) {
+                nextGreater[current] = -1;
+            } else {
+                nextGreater[current] = st.top();
+            }
+            
+            st.push(current);  // current ko push kar do future ke liye
         }
-
-        vector<int> ans;
+        
+        // Step 2: nums1 ke har element ke liye map se lookup karo
+        vector<int> result;
         for (int num : nums1) {
-            ans.push_back(nge[num]);
+            result.push_back(nextGreater[num]);
         }
-
-        return ans;
+        
+        return result;
     }
 };
