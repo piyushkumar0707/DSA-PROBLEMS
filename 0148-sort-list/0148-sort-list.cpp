@@ -11,69 +11,39 @@
 class Solution {
 public:
     ListNode* sortList(ListNode* head) {
-        //If List Contain a Single or 0 Node
-        if(head == NULL || head ->next == NULL)
-            return head;
+        if(head==NULL || head->next==NULL)return head;
+        ListNode* mid= findMiddle(head);
+        ListNode* secondHalf= mid->next;
+        mid->next= NULL;
+
+        ListNode* leftSorted= sortList(head);
+        ListNode* rightSorted= sortList(secondHalf);
+        return mergeTwoLists(leftSorted, rightSorted);
         
-        
-        ListNode *temp = NULL;
-        ListNode *slow = head;
-        ListNode *fast = head;
-        
-        // 2 pointer appraoach / turtle-hare Algorithm (Finding the middle element)
-        while(fast !=  NULL && fast -> next != NULL)
-        {
-            temp = slow;
-            slow = slow->next;          //slow increment by 1
-            fast = fast ->next ->next;  //fast incremented by 2
-            
-        }   
-        temp -> next = NULL;            //end of first left half
-        
-        ListNode* l1 = sortList(head);    //left half recursive call
-        ListNode* l2 = sortList(slow);    //right half recursive call
-        
-        return mergelist(l1, l2);         //mergelist Function call
-            
     }
-    
-    //MergeSort Function O(n*logn)
-    ListNode* mergelist(ListNode *l1, ListNode *l2)
-    {
-        ListNode *ptr = new ListNode(0);
-        ListNode *curr = ptr;
-        
-        while(l1 != NULL && l2 != NULL)
-        {
-            if(l1->val <= l2->val)
-            {
-                curr -> next = l1;
-                l1 = l1 -> next;
-            }
-            else
-            {
-                curr -> next = l2;
-                l2 = l2 -> next;
-            }
-        
-        curr = curr ->next;
-        
+    ListNode* findMiddle(ListNode* head){
+        ListNode* fast= head;
+        ListNode* slow= head;
+        while(fast->next!=NULL && fast->next->next!=NULL){
+            slow= slow->next;
+            fast= fast->next->next;
+        }return slow;
+    }
+
+    ListNode* mergeTwoLists(ListNode* list1, ListNode* list2){
+        ListNode* dummy= new ListNode(-1);
+        ListNode* tail= dummy;
+        while(list1!=NULL && list2!=NULL){
+            if(list1->val < list2->val){
+                tail->next=list1;
+                list1=list1->next;
+            }else{
+                tail->next= list2;
+                list2=list2->next;
+            }tail=tail->next;
         }
-        
-        //for unqual length linked list
-        
-        if(l1 != NULL)
-        {
-            curr -> next = l1;
-            l1 = l1->next;
-        }
-        
-        if(l2 != NULL)
-        {
-            curr -> next = l2;
-            l2 = l2 ->next;
-        }
-        
-        return ptr->next;
+        if(list1!=NULL)tail->next=list1;
+        else tail->next=list2;
+        return dummy->next;
     }
 };
