@@ -11,13 +11,15 @@
 class Solution {
 public:
     ListNode* sortList(ListNode* head) {
-        if(head==NULL || head->next==NULL)return head;
-        ListNode* mid= findMiddle(head);
-        ListNode* secondHalf= mid->next;
-        mid->next= NULL;
+        if(head==NULL || head->next==NULL)return head; //Base case: empty ya single node — already sorted
+        ListNode* mid= findMiddle(head);  //Step 1: middle dhundo
+        ListNode* secondHalf= mid->next; // Step 2: split karo — List B ka head save karo PEHLE, fir tod
+        mid->next= NULL;  // List A ko List B se disconnect kar diya
 
         ListNode* leftSorted= sortList(head);
         ListNode* rightSorted= sortList(secondHalf);
+
+         // Step 3: dono halves recursively sort karo
         return mergeTwoLists(leftSorted, rightSorted);
         
     }
