@@ -10,28 +10,23 @@
  * };
  */
 class Solution {
-    int maxSum = INT_MIN;
-
-    int maxGain(TreeNode* node) {
-        if (!node) return 0;
-
-        // Recursively compute max gain from left and right subtrees
-        int leftGain = max(0, maxGain(node->left));   // Ignore negative paths
-        int rightGain = max(0, maxGain(node->right));
-
-        // Compute path sum passing through current node
-        int currentPathSum = node->val + leftGain + rightGain;
-
-        // Update global max if current path is better
-        maxSum = max(maxSum, currentPathSum);
-
-        // Return max gain including current node and one subtree
-        return node->val + max(leftGain, rightGain);
-    }
-
 public:
+int sum=INT_MIN;
     int maxPathSum(TreeNode* root) {
-        maxGain(root);
-        return maxSum;
+        helper(root);
+        return sum;
+        
+    }
+    int helper(TreeNode* root){
+        if(root==NULL)return 0;
+        int leftSum= helper(root->left);
+        int rightSum= helper(root->right);
+
+        leftSum= max(leftSum,0);
+        rightSum= max(rightSum,0);
+
+        int maxPath= root->val+ leftSum+ rightSum;
+        sum= max(sum, maxPath);
+        return root->val+ max(leftSum, rightSum);
     }
 };
