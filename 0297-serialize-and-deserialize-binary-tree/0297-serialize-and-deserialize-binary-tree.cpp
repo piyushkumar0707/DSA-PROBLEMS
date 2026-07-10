@@ -11,45 +11,36 @@ class Codec {
 public:
     // Encodes a tree to a single string.
     string serialize(TreeNode* root) {
-        string result;
-        serializeHelper(root, result);
+        if(root == nullptr) return "N,";
+        
+        string result = to_string(root->val) + ",";
+        result += serialize(root->left);
+        result += serialize(root->right);
+        
         return result;
     }
-
-    // Helper for serialization
-    void serializeHelper(TreeNode* node, string& result) {
-        if (!node) {
-            result += "#,";
-            return;
-        }
-        result += to_string(node->val) + ",";
-        serializeHelper(node->left, result);
-        serializeHelper(node->right, result);
-    }
-
+    
     // Decodes your encoded data to tree.
     TreeNode* deserialize(string data) {
-        queue<string> tokens;
+        queue<string> q;
         stringstream ss(data);
-        string token;
-        while (getline(ss, token, ',')) {
-            tokens.push(token);
+        string item;
+        while(getline(ss, item, ',')) {
+            q.push(item);
         }
-        return deserializeHelper(tokens);
+        return buildTree(q);
     }
-
-    // Helper for deserialization
-    TreeNode* deserializeHelper(queue<string>& tokens) {
-        if (tokens.empty()) return nullptr;
-
-        string val = tokens.front();
-        tokens.pop();
-
-        if (val == "#") return nullptr;
-
-        TreeNode* node = new TreeNode(stoi(val));
-        node->left = deserializeHelper(tokens);
-        node->right = deserializeHelper(tokens);
-        return node;
+    
+    TreeNode* buildTree(queue<string>& q) {
+        string val = q.front();
+        q.pop();
+        
+        if(val == "N") return nullptr;
+        
+        TreeNode* root = new TreeNode(stoi(val));
+        root->left = buildTree(q);
+        root->right = buildTree(q);
+        
+        return root;
     }
 };
