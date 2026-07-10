@@ -11,33 +11,27 @@
  */
 class Solution {
 public:
-    unordered_map<int, int> inorderIndex;
-
+unordered_map<int,int>inorderIndexMap;
     TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
-        // Map each value to its index in inorder for O(1) lookups
-        for (int i = 0; i < inorder.size(); ++i) {
-            inorderIndex[inorder[i]] = i;
+        for(int i=0; i<inorder.size(); i++){
+            inorderIndexMap[inorder[i]]=i;
         }
-
-        // Start from the last index in postorder
-        int postIndex = postorder.size() - 1;
-        return build(inorder, postorder, 0, inorder.size() - 1, postIndex);
+        return build(inorder, 0, inorder.size()-1, postorder, 0, postorder.size()-1);
+        
+        
     }
+    TreeNode* build(vector<int>& inorder, int inStart, int inEnd , vector<int>& postorder, int postStart, int postEnd){
+        if(postStart > postEnd)return nullptr;
+        int rootVal= postorder[postEnd]; //root val 
+        TreeNode* root= new TreeNode(rootVal);
 
-    TreeNode* build(vector<int>& inorder, vector<int>& postorder, int inLeft, int inRight, int& postIndex) {
-        if (inLeft > inRight) return nullptr;
+        int rootIndex= inorderIndexMap[rootVal];
+        int leftSize= rootIndex- inStart;
 
-        // The current root is the last element in postorder
-        int rootVal = postorder[postIndex--];
-        TreeNode* root = new TreeNode(rootVal);
-
-        // Find the index of the root in inorder
-        int index = inorderIndex[rootVal];
-
-        // Build right subtree first (postorder pops from end)
-        root->right = build(inorder, postorder, index + 1, inRight, postIndex);
-        root->left = build(inorder, postorder, inLeft, index - 1, postIndex);
+        root->left=build(inorder, inStart, rootIndex-1, postorder, postStart, postStart+leftSize-1);
+        root->right= build(inorder, rootIndex+1, inEnd, postorder, postStart+leftSize, postEnd-1);
 
         return root;
+
     }
 };
