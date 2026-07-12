@@ -1,50 +1,38 @@
 class Solution {
 public:
+
+    void dfs(vector<vector<int>>& grid, int r, int c){
+        int m= grid.size();
+        int n= grid[0].size();
+        if(r<0 || r>=m || c<0 || c>=n)return;
+        if(grid[r][c]!=1)return; //inme dfs lgana hi nhi hai
+        grid[r][c]=2; //safe hai inhe count nhi karne ye boundary pe hai
+
+        dfs(grid, r+1, c);
+        dfs(grid, r-1, c);
+        dfs(grid, r,c+1);
+        dfs(grid, r,c-1);
+    }
+
     int numEnclaves(vector<vector<int>>& grid) {
-        int n = grid.size();
-        int m = grid[0].size();
-        vector<vector<int>> vis(n, vector<int>(m, 0));
-        queue<pair<int, int>> q;
+        int count=0;
+        int m=grid.size();
+        int n=grid[0].size();
+        for(int i=0; i<m; i++){
+            if(grid[i][0]==1)dfs(grid, i,0);
+            if(grid[i][n-1]==1)dfs(grid, i,n-1);
 
-        // Step 1: Push all boundary land cells into queue
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
-                if (i == 0 || j == 0 || i == n - 1 || j == m - 1) {
-                    if (grid[i][j] == 1) {
-                        q.push({i, j});
-                        vis[i][j] = 1;
-                    }
-                }
+        }for(int j=0; j<n;j++){
+            if(grid[0][j]==1)dfs(grid, 0,j);
+            if(grid[m-1][j]==1)dfs(grid, m-1,j);
+        }
+        for(int i=0; i<m; i++){
+            for(int j=0; j<n; j++){
+                
+                if(grid[i][j]==1)count++; //unsafe count karne hai jo boundary se connected nhi hai
             }
         }
-
-        // Step 2: BFS to mark all reachable land from boundary
-        const int delrow[] = {-1, 0, 1, 0};
-        const int delcol[] = {0, 1, 0, -1};
-
-        while (!q.empty()) {
-            int row = q.front().first;
-            int col = q.front().second;
-            q.pop();
-
-            for (int k = 0; k < 4; k++) {
-                int nrow = row + delrow[k];
-                int ncol = col + delcol[k];
-                if (nrow >= 0 && nrow < n && ncol >= 0 && ncol < m &&
-                    !vis[nrow][ncol] && grid[nrow][ncol] == 1) {
-                    q.push({nrow, ncol});
-                    vis[nrow][ncol] = 1;
-                }
-            }
-        }
-
-        // Step 3: Count enclaves (land not visited)
-        int cnt = 0;
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
-                if (grid[i][j] == 1 && !vis[i][j]) cnt++;
-            }
-        }
-        return cnt;
+        return count;
+        
     }
 };
