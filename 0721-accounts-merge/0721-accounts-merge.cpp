@@ -1,50 +1,46 @@
 class Solution {
 public:
-    vector<vector<string>> accountsMerge(vector<vector<string>>& accounts) {
-        unordered_map<string, string> parent;
-        unordered_map<string, string> emailToName;
 
-        // Step 1: Initialize parent and map email to name
-        for (const auto& account : accounts) {
-            string name = account[0];
-            for (int i = 1; i < account.size(); ++i) {
-                parent[account[i]] = account[i]; // each email is its own parent initially
-                emailToName[account[i]] = name;
-            }
+    unordered_map<string, vector<string>>adj;
+    unordered_map<string, bool>visited;
+    void dfs(string email, vector<string>& component){
+        if(visited[email])return;
+        visited[email]=true;
+        component.push_back(email);
+
+        for(int i=0; i<adj[email].size(); i++){
+            if(!visited[adj[email][i]])dfs(adj[email][i],component);
         }
-
-        // Step 2: Union emails in the same account
-        for (const auto& account : accounts) {
-            string rootEmail = find(account[1], parent);
-            for (int i = 2; i < account.size(); ++i) {
-                string currentEmail = find(account[i], parent);
-                parent[currentEmail] = rootEmail;
-            }
-        }
-
-        // Step 3: Group emails by root parent
-        unordered_map<string, set<string>> unions;
-        for (const auto& [email, _] : parent) {
-            string root = find(email, parent);
-            unions[root].insert(email);
-        }
-
-        // Step 4: Format result
-        vector<vector<string>> result;
-        for (const auto& [root, emails] : unions) {
-            vector<string> mergedAccount;
-            mergedAccount.push_back(emailToName[root]);
-            mergedAccount.insert(mergedAccount.end(), emails.begin(), emails.end());
-            result.push_back(mergedAccount);
-        }
-
-        return result;
     }
 
-private:
-    string find(string email, unordered_map<string, string>& parent) {
-        if (parent[email] != email)
-            parent[email] = find(parent[email], parent); // path compression
-        return parent[email];
+    vector<vector<string>> accountsMerge(vector<vector<string>>& accounts) {
+        //adjacency list bnao
+        for(int i=0; i<accounts.size(); i++){
+            string first= accounts[i][1];// pehla email representative
+            for(int j=2; j<accounts[i].size(); j++){
+                adj[first].push_back(accounts[i][j]);
+                adj[accounts[i][j]].push_back(first);
+            }
+
+        }// step-2 email to name map banao
+        unordered_map<string, string> emailToName;
+        for(int i=0; i<accounts.size(); i++){
+            for(int j=1; j<accounts[i].size(); j++){
+                emailToName[accounts[i][j]]=accounts[i][0];
+            }
+        }
+        //step 3- dfs se connected components nikalo
+        vector<vector<string>>result;
+        for(int i=0; i<accounts.size(); i++){
+            string first= accounts[i][1];
+            if(!visited[first]){
+                vector<string>component;
+                dfs(first, component);
+                sort(component.begin(), component.end()); //emails sort karo
+                component.insert(component.begin(), emailToName[first]); //name pehle
+                result.push_back(component);
+            }
+        }return result;
+
     }
 };
