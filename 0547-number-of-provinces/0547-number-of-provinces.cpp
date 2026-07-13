@@ -1,42 +1,31 @@
 class Solution {
-private:
-    // STANDARD DFS HELPER (The Worker)
-    void dfs(int node, vector<vector<int>> &adj, vector<int> &visited) {
-        visited[node] = 1; 
-        for(auto neighbour : adj[node]) {
-            if(!visited[neighbour]) {
-                dfs(neighbour, adj, visited);
+public:
+
+    void dfs(vector<vector<int>> & isConnected, vector<bool>& visited, int node){
+        int n= isConnected.size();
+        if(visited[node])return;
+        visited[node]=true;
+
+        for(int j=0; j<n; j++){
+            if(!visited[j] && isConnected[node][j]==1){
+                dfs(isConnected, visited, j);
             }
         }
     }
 
-public:
+
     int findCircleNum(vector<vector<int>>& isConnected) {
-        int V = isConnected.size();
-
-        // STEP 1: Convert Matrix to Adjacency List
-        // This makes the rest of the code standard for any problem
-        vector<vector<int>> adj(V);
-        for(int i = 0; i < V; i++) {
-            for(int j = 0; j < V; j++) {
-                if(isConnected[i][j] == 1 && i != j) {
-                    adj[i].push_back(j);
-                    adj[j].push_back(i);
-                }
+        int n=isConnected.size();
+        vector<bool> visited(n ,false);
+        int count=0;
+        for(int i=0; i<n; i++){
+            if(!visited[i]){
+                count ++;
+                dfs(isConnected, visited, i);
             }
-        }
 
-        // STEP 2: Initialize Visited Array
-        vector<int> visited(V, 0);
-        int provinces = 0;
+        }return count;
 
-        // STEP 3: Loop for Disconnected Components (The Manager)
-        for(int i = 0; i < V; i++) {
-            if(!visited[i]) {
-                provinces++;          // Logic: Found a new province
-                dfs(i, adj, visited); // Action: Visit all cities in this province
-            }
-        }
-        return provinces;
+        
     }
 };
