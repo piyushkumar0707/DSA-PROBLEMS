@@ -1,34 +1,32 @@
 class Solution {
 public:
+
+    bool dfs(int node, vector<vector<int>>& adj, vector<int>& state){
+        state[node]=1; //unvivisited hai
+        for(int i=0; i<adj[node].size(); i++){
+            int nbr= adj[node][i];
+            if(state[nbr]==1)return true;
+            if(state[nbr]==0 && dfs(nbr, adj, state))return true;
+        }
+        state[node]=2;
+        return false;
+
+    }
+
+
     bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
-        vector<vector<int>> adj(numCourses); // adjacency list
-        vector<int> indegree(numCourses, 0); // count of prerequisites
-
-        // Build graph
-        for (auto& p : prerequisites) {
-            adj[p[1]].push_back(p[0]); // edge from p[1] to p[0]
-            indegree[p[0]]++;          // p[0] has one more prerequisite
+        vector<vector<int>>adj(numCourses);
+        for(int i=0; i<prerequisites.size(); i++){
+            adj[prerequisites[i][0]].push_back(prerequisites[i][1]); //directed graph
         }
 
-        queue<int> q;
-        // Start with courses that have no prerequisites
-        for (int i = 0; i < numCourses; ++i) {
-            if (indegree[i] == 0) q.push(i);
-        }
+        vector<int>state(numCourses, 0);
+        for(int i=0; i<numCourses; i++){
+            if(state[i]==0){
+                if(dfs(i, adj, state))return false;
 
-        int visited = 0;
-        while (!q.empty()) {
-            int course = q.front(); q.pop();
-            visited++;
-
-            for (int neighbor : adj[course]) {
-                indegree[neighbor]--;
-                if (indegree[neighbor] == 0) {
-                    q.push(neighbor);
-                }
             }
-        }
-
-        return visited == numCourses; // If we visited all courses, it's possible
+        }return true;
+        
     }
 };
