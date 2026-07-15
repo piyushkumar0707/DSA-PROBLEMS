@@ -1,40 +1,32 @@
 class Solution {
 public:
     vector<int> findOrder(int numCourses, vector<vector<int>>& prerequisites) {
-        vector<vector<int>> adj(numCourses); // adjacency list
-        vector<int> inDegree(numCourses, 0); // track incoming edges
-        vector<int> order; // final course order
+        vector<vector<int>> adj(numCourses);
+        vector<int> indegree(numCourses, 0);
 
-        // Build graph
-        for (auto& pre : prerequisites) {
-            int course = pre[0], prereq = pre[1];
-            adj[prereq].push_back(course);
-            inDegree[course]++;
+        //adjacency list + indegree 
+        for(int i=0; i<prerequisites.size(); i++){
+            adj[prerequisites[i][1]].push_back(prerequisites[i][0]);
+            indegree[prerequisites[i][0]]++;
         }
 
-        // Queue for courses with no prerequisites
-        queue<int> q;
-        for (int i = 0; i < numCourses; ++i) {
-            if (inDegree[i] == 0)
-                q.push(i);
+        queue<int>q;
+        for(int i=0; i<numCourses; i++){
+            if(indegree[i]==0)q.push(i);
         }
+        vector<int>result;
+        while(!q.empty()){
+            int node= q.front(); q.pop();
+            result.push_back(node);
 
-        // Process courses
-        while (!q.empty()) {
-            int curr = q.front(); q.pop();
-            order.push_back(curr);
-
-            for (int neighbor : adj[curr]) {
-                inDegree[neighbor]--;
-                if (inDegree[neighbor] == 0)
-                    q.push(neighbor);
+            for(int i=0; i<adj[node].size(); i++){
+                indegree [adj[node][i]]--;
+                if(indegree[adj[node][i]]==0)q.push(adj[node][i]);
             }
         }
+        if(result.size()!=numCourses)return {};
+        return result;
 
-        // If all courses are processed, return order
-        if (order.size() == numCourses)
-            return order;
-        else
-            return {}; // cycle detected
+        
     }
 };
