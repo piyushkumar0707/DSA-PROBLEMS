@@ -1,43 +1,50 @@
-#include <vector>
-#include <queue>
-#include <cmath>
-using namespace std;
-
 class Solution {
 public:
     int minimumEffortPath(vector<vector<int>>& heights) {
-        int rows = heights.size();
-        int cols = heights[0].size();
-        vector<vector<int>> effort(rows, vector<int>(cols, INT_MAX));
-        effort[0][0] = 0;
+        int m= heights.size(); int n= heights[0].size();
+        vector<vector<int>> dist(m, vector<int>(n, INT_MAX));
+        priority_queue<tuple<int, int, int>, vector<tuple<int, int, int>>, greater<>>pq;
 
-        // Min-heap priority queue: (effort, row, col)
-        priority_queue<tuple<int, int, int>, vector<tuple<int, int, int>>, greater<>> pq;
-        pq.emplace(0, 0, 0);
+        dist[0][0]=0;
+        pq.push({0,0,0}); // {effort, row, col}
 
-        vector<int> dirX = {0, 0, 1, -1};
-        vector<int> dirY = {1, -1, 0, 0};
+        while(!pq.empty()){
+            auto[effort, r, c] =pq.top(); pq.pop();
+            if(r==m-1 && c==n-1)return effort;
+            if(effort > dist[r][c])continue;
 
-        while (!pq.empty()) {
-            auto [currEffort, x, y] = pq.top();
-            pq.pop();
+            if(r+1< m){
+                int newEffort= max(effort, abs(heights[r][c]-heights[r+1][c]));
+                if(newEffort< dist[r+1][c]){
+                    dist[r+1][c]=newEffort;
+                    pq.push({newEffort, r+1, c});
+                }
 
-            if (x == rows - 1 && y == cols - 1) return currEffort;
-
-            for (int d = 0; d < 4; ++d) {
-                int nx = x + dirX[d];
-                int ny = y + dirY[d];
-
-                if (nx >= 0 && ny >= 0 && nx < rows && ny < cols) {
-                    int nextEffort = max(currEffort, abs(heights[x][y] - heights[nx][ny]));
-                    if (nextEffort < effort[nx][ny]) {
-                        effort[nx][ny] = nextEffort;
-                        pq.emplace(nextEffort, nx, ny);
-                    }
+            }
+            if(r-1>=0){
+                int newEffort= max(effort, abs(heights[r][c]-heights[r-1][c]));
+                if(newEffort< dist[r-1][c]){
+                    dist[r-1][c]=newEffort;
+                    pq.push({newEffort, r-1, c});
+                }
+            }
+            if(c+1<n){
+                int newEffort= max(effort, abs(heights[r][c]- heights[r][c+1]));
+                if(newEffort<dist[r][c+1]){
+                    dist[r][c+1]=newEffort;
+                    pq.push({newEffort, r, c+1});
+                }
+            }
+            if(c-1>=0){
+                int newEffort= max(effort, abs(heights[r][c]- heights[r][c-1]));
+                if(newEffort< dist[r][c-1]){
+                    dist[r][c-1]=newEffort;
+                    pq.push({newEffort, r, c-1});
                 }
             }
         }
 
-        return 0; // Should never reach here
+        return dist[m-1][n-1];
+        
     }
 };
