@@ -1,33 +1,21 @@
-#include <vector>
-#include <unordered_map>
-#include <algorithm>
-using namespace std;
-
 class Solution {
 public:
     int leastInterval(vector<char>& tasks, int n) {
-        unordered_map<char, int> freq;
-        int maxFreq = 0;
-
-        // Count frequency of each task
-        for (char task : tasks) {
-            freq[task]++;
-            maxFreq = max(maxFreq, freq[task]);
+        //step 1 freq count
+        int freq[26]={0};
+        for(char c: tasks){
+            freq[c-'A']++;
         }
 
-        // Count how many tasks have the max frequency
-        int maxCount = 0;
-        for (auto& entry : freq) {
-            if (entry.second == maxFreq) {
-                maxCount++;
-            }
+        //step-2 max freq
+        int max_freq=*max_element(freq, freq+26);
+
+        //step-3 kitne taks ki freq==max_freq hai
+        int count_max=0;
+        for(int i=0; i<26; i++){
+            if(freq[i]==max_freq)count_max++;
         }
-
-        // Calculate the minimum intervals
-        int partCount = maxFreq - 1;
-        int partLength = n + 1;
-        int emptySlots = partCount * partLength + maxCount;
-
-        return max((int)tasks.size(), emptySlots);
+        int formula= (max_freq-1)*(n+1)+count_max;
+        return max(formula,(int)tasks.size());
     }
 };
