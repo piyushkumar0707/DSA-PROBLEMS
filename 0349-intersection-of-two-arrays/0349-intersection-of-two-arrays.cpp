@@ -1,19 +1,15 @@
 class Solution {
 public:
     vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
-        unordered_map<int, int>freq1;
-        for(int i=0; i<nums1.size(); i++){
-            freq1[nums1[i]]++;
-        }unordered_map<int, int>freq2;
-        for(int i=0; i<nums2.size(); i++){
-            freq2[nums2[i]]++;
-        }
-
-        vector<int>result;
-        for(auto it: freq1){
-            if(freq2.find(it.first)!=freq1.end()){
-                result.push_back(it.first);
+        set<int>s;
+        for(int i:nums1){
+            for(int j: nums2){
+                if(i==j){
+                    s.insert(i);
+                }
             }
-        }return result;
+        }
+        vector<int>arr(s.begin(),s.end());
+        return arr;
     }
 };
